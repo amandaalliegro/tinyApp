@@ -48,7 +48,7 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${shortURL}`);
  
         
-});	});
+});
 
 function generateRandomString() {
   return Math.random().toString(36).substring(2, 8);
