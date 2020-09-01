@@ -41,6 +41,11 @@ app.get("/hello", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  console.log(req.body);  // Log the POST request body to the console
-  res.send("Ok");         // Respond with 'Ok' (we will replace this)
-});
+  console.log(req.body);  
+  res.send("Ok");         
+  res.redirect(`/urls/${shortURL}`);
+})
+
+function generateRandomString() {
+  return Math.random().toString(36).substring(2, 8);
+}
