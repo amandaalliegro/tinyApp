@@ -28,12 +28,19 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
 app.get("/urls/:shortURL", (req, res) => {
+  console.log('anything');
+  console.log(req.params);
   let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
   res.render("urls_show", templateVars);
 });
 app.get('/u/:shortURL', (req, res) => {
   const longURL = urlDatabase[req.params.shortURL];
   res.redirect(longURL);
+});
+
+app.post('/urls/:shortURL/delete', (req, res) => {// Add a POST route that removes a URL resource: POST /urls/:shortURL/delete
+  delete urlDatabase[req.params.shortURL];
+  res.redirect("/urls");
 });
 
 app.listen(PORT, () => {
@@ -46,12 +53,33 @@ app.get("/hello", (req, res) => {
 
 app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();
-  urlDatabase[shortURL] = req.body.longURL;
+  console.log(req.body);
+  // app.post('/urls/:shortURL', (req, res) => {
+    // const shortURL = req.params.shortURL;
+    // const longURl = req.body.longURL;
+    // if (longURl.match(/^(https:\/\/|http:\/\/)/)) {
+      // urlDatabase[shortURL] = longURl;
+    // } else {
+      // urlDatabase[shortURL] = longURL;
+    // }
+    urlDatabase[shortURL] = req.body.longURL;
+    res.redirect(`/urls/${shortURL}`);
+  });
+  
   //console.log(req.body);  // Log the POST request body to the console	  
   //res.send("Ok");         // Respond with 'Ok' (we will replace this)	  
-  res.redirect(`/urls/${shortURL}`);
  
         
+
+app.post('/urls/:shortURL', (req, res) => { // Add a POST route that updates a URL resource;
+  const shortURL = req.params.shortURL;
+  const longURl = req.body.longURL;
+  if (longURl.match(/^(https:\/\/|http:\/\/)/)) {
+    urlDatabase[shortURL] = longURl;
+  } else {
+    urlDatabase[shortURL] = `http://www.${longURl}`;
+  }
+  res.redirect(`/urls/${shortURL}`);
 });
 
 function generateRandomString() {
