@@ -22,19 +22,19 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get('/urls', (req, res) => {
-  const templateVars = { urls: urlDatabase, username: req.cookies["username"]
+  const templateVars = { urls: urlDatabase, user: users[req.cookies["user_id"]]
 };
   res.render('urls_index', templateVars);
 });
 app.get("/urls/new", (req, res) => {
-  let templateVars = { username: req.cookies["username"] };
+  let templateVars = { user: users[req.cookies["user_id"]]};
   res.render("urls_new", templateVars);
 
 });
 app.get("/urls/:shortURL", (req, res) => { // route to shortURL
   console.log('anything');
   console.log(req.params);
-  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies["username"] };
+  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], user: users[req.cookies["user_id"]] };
   res.render("urls_show", templateVars);
 });
 app.get('/u/:shortURL', (req, res) => {
@@ -42,7 +42,7 @@ app.get('/u/:shortURL', (req, res) => {
   res.redirect(longURL);
 });
 app.get('/register', (req, res) => { // GET /register endpoint, which returns the template register
-  const templateVars = { username: req.cookies["username"] };
+  const templateVars = { user: users[req.cookies["user_id"]]};
   res.render('register', templateVars);
 });
 
@@ -92,16 +92,36 @@ app.post('/urls/:shortURL', (req, res) => { // Add a POST route that updates a U
 
 
 app.post('/login', (req, res) => {// Add a POST route to handle /login
-  if (req.body.username !== "") {
-    res.cookie("username", req.body.username);
+  if (req.body.user_id !== "") {
+    res.cookie("user_id", req.body.user_id);
   }
   res.redirect('/urls');
 });
 app.post('/logout', (req, res) => {
-  res.clearCookie("username");
+  res.clearCookie("user_id");
+  res.redirect('/urls');
+});
+app.post('/register', (req, res) => {
+  const id = generateRandomString();
+  const { email, password } = req.body;
+  users[id] = { id, email, password };
+  res.cookie("user_id", id);
   res.redirect('/urls');
 });
 
 function generateRandomString() {
   return Math.random().toString(36).substring(2, 8);
+};
+
+const users = { //global object called users which will be used to store and access the users in the app
+  "userRandomID": {
+    id: "userRandomID", 
+    email: "user@example.com", 
+    password: "purple-monkey-dinosaur"
+  },
+ "user2RandomID": {
+    id: "user2RandomID", 
+    email: "user2@example.com", 
+    password: "dishwasher-funk"
+  }
 }
