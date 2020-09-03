@@ -92,11 +92,25 @@ app.post('/urls/:shortURL', (req, res) => { // Add a POST route that updates a U
 
 
 app.post('/login', (req, res) => {// Add a POST route to handle /login
-  if (req.body.user_id !== "") {
-    res.cookie("user_id", req.body.user_id);
+  //const { email, password } = req.body;
+  const email = req.body.email;
+  const password = req.body.password;
+
+  if (email === "" || password === '') {    
+      return res.status(400).send("<h1>400 Bad Request</h1><p>Please fill up all fields.</p>");
+      } else {
+    for (const key in users) {
+      if (users[key].email === email) {//&& users[key].password === password) {
+        res.cookie("user_id", key);
+        return res.redirect('/urls');
+      } else {
+        return res.status(400).send("<h1> email not registered</h>")
+      }
+    }
   }
-  res.redirect('/urls');
+  //return res.status(400).send("<h1>400 Bad Request </h1><p>User is already registered. Please, make sure you are registering a new user.</p>");
 });
+
 app.post('/logout', (req, res) => {
   res.clearCookie("user_id");
   res.redirect('/urls');
@@ -105,9 +119,22 @@ app.post('/register', (req, res) => {
   const id = generateRandomString();
   const { email, password } = req.body;
   users[id] = { id, email, password };
-  res.cookie("user_id", id);
-  res.redirect('/urls');
-});
+  if (email === "" || password === '') {    
+    return res.status(400).send("<h1>400 Bad Request</h1><p>Please fill up all fields.</p>");
+    } 
+  for (const key in users) {
+    if (users[key].email === email) {
+      return res.status(400).send("<h1>400 Bad Request </h1><p>User is already registered. Please, make sure you are registering a new user.</p>");
+    }
+     
+    } res.cookie("user_id", key);
+    return res.redirect('/urls');
+})
+
+  //res.cookie("user_id", id);
+  //res.redirect('/urls');
+  //console.log('users',users)
+
 
 function generateRandomString() {
   return Math.random().toString(36).substring(2, 8);
