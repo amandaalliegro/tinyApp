@@ -45,6 +45,10 @@ app.get('/register', (req, res) => { // GET /register endpoint, which returns th
   const templateVars = { user: users[req.cookies["user_id"]]};
   res.render('register', templateVars);
 });
+app.get('/login', (req, res) => { // GET /login endpoint, which returns the template login
+  const templateVars = { user: users[req.cookies["user_id"]]};
+  res.render('login', templateVars);
+});
 
 app.post('/urls/:shortURL/delete', (req, res) => {// Add a POST route that removes a URL resource: POST /urls/:shortURL/delete
   delete urlDatabase[req.params.shortURL];
@@ -95,40 +99,46 @@ app.post('/login', (req, res) => {// Add a POST route to handle /login
   //const { email, password } = req.body;
   const email = req.body.email;
   const password = req.body.password;
-
+console.log(users);
   if (email === "" || password === '') {    
       return res.status(400).send("<h1>400 Bad Request</h1><p>Please fill up all fields.</p>");
       } else {
     for (const key in users) {
-      if (users[key].email === email) {//&& users[key].password === password) {
+     
+      console.log("users email", users[key].email)
+      console.log("email from req", email)
+      if (users[key].email === email && users[key].password === password) {
+    
         res.cookie("user_id", key);
         return res.redirect('/urls');
-      } else {
-        return res.status(400).send("<h1> email not registered</h>")
-      }
+      }     
     }
+    return res.status(400).send("<h1> email not registered</h>")
   }
   //return res.status(400).send("<h1>400 Bad Request </h1><p>User is already registered. Please, make sure you are registering a new user.</p>");
 });
 
 app.post('/logout', (req, res) => {
   res.clearCookie("user_id");
-  res.redirect('/urls');
+  res.redirect('/login');
 });
 app.post('/register', (req, res) => {
   const id = generateRandomString();
   const { email, password } = req.body;
-  users[id] = { id, email, password };
+  
   if (email === "" || password === '') {    
     return res.status(400).send("<h1>400 Bad Request</h1><p>Please fill up all fields.</p>");
     } 
   for (const key in users) {
+    console.log("user emails", users[key].email)
+    console.log("email from body", email)
     if (users[key].email === email) {
       return res.status(400).send("<h1>400 Bad Request </h1><p>User is already registered. Please, make sure you are registering a new user.</p>");
-    }
-     
-    } res.cookie("user_id", key);
-    return res.redirect('/urls');
+    }   
+  }
+  users[id] = { id, email, password };
+  res.cookie("user_id", id);
+  return res.redirect('/urls');
 })
 
   //res.cookie("user_id", id);
