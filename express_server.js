@@ -99,21 +99,19 @@ app.post('/login', (req, res) => {// Add a POST route to handle /login
   //const { email, password } = req.body;
   const email = req.body.email;
   const password = req.body.password;
-console.log(users);
-  if (email === "" || password === '') {    
+  console.log(users);
+  if (!email || !password) {
       return res.status(400).send("<h1>400 Bad Request</h1><p>Please fill up all fields.</p>");
-      } else {
+  } else {
     for (const key in users) {
-     
-      console.log("users email", users[key].email)
-      console.log("email from req", email)
+      console.log("users email", users[key].email);
+      console.log("email from req", email);
       if (users[key].email === email && users[key].password === password) {
-    
         res.cookie("user_id", key);
-        return res.redirect('/urls');
-      }     
+        res.redirect('/urls');
+      }
     }
-    return res.status(400).send("<h1> email not registered</h>")
+    res.status(403).send("<h1>Email and Password correct</h>");
   }
   //return res.status(400).send("<h1>400 Bad Request </h1><p>User is already registered. Please, make sure you are registering a new user.</p>");
 });
@@ -136,7 +134,7 @@ app.post('/register', (req, res) => {
       return res.status(400).send("<h1>400 Bad Request </h1><p>User is already registered. Please, make sure you are registering a new user.</p>");
     }   
   }
-  users[id] = { id, email, password };
+  users[id] = { id, email, password };  
   res.cookie("user_id", id);
   return res.redirect('/urls');
 })
