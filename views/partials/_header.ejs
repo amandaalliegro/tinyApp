@@ -8,6 +8,7 @@
       <div class="navbar-nav">
         <a class="nav-item nav-link" href="/urls">My URLs</a>
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
+        <% if (username === undefined) { %>
         <form class="form-inline ml-auto" action="/login" method="POST">
           <div class="form-group mb-2">
             <label for="username"></label>
@@ -16,6 +17,14 @@
             <button type="submit" class="btn btn-outline-dark">Login</button>
           </div>
         </form>
+        <% } else { %>
+          <form class="form-inline ml-auto" action="/logout" method="POST">
+            <div class="form-group mb-2">
+              <label for="username" style=" margin: 1em">Logged in as: <%= username %>!</label>
+              <button type="submit" class="btn btn-outline-dark">Logout</button>
+            </div>
+          </form>
+          <% } %>
       </div>
     </div>
   </nav>
