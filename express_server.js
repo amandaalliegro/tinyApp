@@ -31,7 +31,7 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new", templateVars);
 
 });
-app.get("/urls/:shortURL", (req, res) => {
+app.get("/urls/:shortURL", (req, res) => { // route to shortURL
   console.log('anything');
   console.log(req.params);
   let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies["username"] };
@@ -40,6 +40,10 @@ app.get("/urls/:shortURL", (req, res) => {
 app.get('/u/:shortURL', (req, res) => {
   const longURL = urlDatabase[req.params.shortURL];
   res.redirect(longURL);
+});
+app.get('/register', (req, res) => { // GET /register endpoint, which returns the template register
+  const templateVars = { username: req.cookies["username"] };
+  res.render('register', templateVars);
 });
 
 app.post('/urls/:shortURL/delete', (req, res) => {// Add a POST route that removes a URL resource: POST /urls/:shortURL/delete
