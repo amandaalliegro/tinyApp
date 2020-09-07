@@ -6,13 +6,10 @@ const cookieParser = require('cookie-parser');
 app.use(cookieParser());
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
-// https://www.npmjs.com/package/bcrypt
+
 const bcrypt = require('bcrypt');
 app.set("view engine", "ejs");
-/*const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
-};*/
+
 const cookieSession = require('cookie-session');
 app.use(cookieSession({
   name: 'session',
@@ -39,7 +36,6 @@ const users = { //global object called users which will be used to store and acc
   "amanda": {
     id: "amanda",
     email: "user@example.com",
-    //password: "purple-monkey-dinosaur",
     hashPassword : bcrypt.hashSync("purple-monkey-dinosaur", 10)
   },
   "clinton": {
@@ -109,7 +105,6 @@ app.get("/hello", (req, res) => {
 
 app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();
-  console.log(req.body);
   
   urlDatabase[shortURL] = {
     longURL: req.body.longURL,
@@ -118,10 +113,6 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${shortURL}`);
 });
   
-//console.log(req.body);  // Log the POST request body to the console
-//res.send("Ok");         // Respond with 'Ok' (we will replace this)
- 
-        
 
 app.post('/urls/:shortURL', (req, res) => { // Add a POST route that updates a URL resource;
   const shortURL = req.params.shortURL;
@@ -180,8 +171,7 @@ app.post('/register', (req, res) => {
 });
 
 
-app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
+app.listen(PORT, () => {;
 });
 
 
